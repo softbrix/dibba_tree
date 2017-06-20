@@ -1,4 +1,3 @@
-
 function DibbaNode(parent, content) {
   // The parent node, undefined for the root node
   this.parent = parent;
@@ -75,14 +74,13 @@ DibbaTree.prototype.update = function(content) {
 Remove a node from the tree. This method returns the node deleted node.
 **/
 DibbaTree.prototype.delete = function() {
-  var path = Array.prototype.slice.call(arguments);
-  var node = findNode(this._rootNode, path);
+  var node = this.getNode.apply(this, arguments);
   if(node === undefined) {
     return undefined;
   }
   if(node.parent === undefined) {
     // We got the root node, did we really want it?
-    if(path.length === 0) {
+    if(arguments.length === 0) {
       this._rootNode = new DibbaNode();
       this._size = 0;
     } else {
@@ -109,10 +107,9 @@ DibbaTree.prototype.getNode = function() {
 Get the content of the node in the tree.
 **/
 DibbaTree.prototype.get = function() {
-  var path = Array.prototype.slice.call(arguments);
-  var node = findNode(this._rootNode, path);
+  var node = this.getNode.apply(this, arguments);
   if(node === undefined) {
-    return node;
+    return undefined;
   }
   return node.content;
 };
