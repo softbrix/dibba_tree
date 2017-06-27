@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/softbrix/dibba_tree.svg?branch=master)](https://travis-ci.org/softbrix/dibba_tree)
+
 # Dibba tree
 This is an simple tree data structure for javascript.
 
@@ -23,7 +25,7 @@ is constructed with the tree object as a parameter and has the methods hasNext a
    the update method.
 
 Since version 0.2.1 the prev and hasPrev methods has been added. They both work
-similar to the next and hasNext methods. 
+similar to the next and hasNext methods.
 
 ## Why Dibba
 Dibba is a town on the eastern coast of the United Arab Emirates. I got the idea
