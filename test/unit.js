@@ -168,4 +168,16 @@ describe('Dibba tree', function() {
       assert.equal(undefined, tree.get(lvl, lvl));
     });
   });
+
+  describe('leafIterator', function() {
+    var tree = new DibbaTree();
+    it('should return a leafIterator', function() {
+      tree.insert(testObject1,0);
+      tree.update(testObject2,1);
+      var it = tree.leafIterator();
+      assert.equal(testObject1, it.next());
+      assert.equal(testObject2, it.next());
+      assert.equal(false, it.hasNext());
+    });
+  });
 });

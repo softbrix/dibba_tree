@@ -1,3 +1,5 @@
+var LeafIterator = require('./leafIterator.js');
+
 function DibbaNode(parent, content) {
   // The parent node, undefined for the root node
   this.parent = parent;
@@ -119,6 +121,13 @@ Get the number of the nodes in the tree.
 **/
 DibbaTree.prototype.getSize = function() {
   return this._size;
+}
+
+/**
+Get the number of the nodes in the tree.
+**/
+DibbaTree.prototype.leafIterator = function() {
+  return new LeafIterator(this);
 }
 
 module.exports = DibbaTree;
