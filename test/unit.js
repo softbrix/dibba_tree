@@ -155,6 +155,7 @@ describe('Dibba tree', function() {
       tree.insert(testObject1, lvl);
       assert.equal(testObject1, tree.get(lvl));
       var deletedNode = tree.delete(lvl);
+      assert.equal(lvl, deletedNode.id);
       assert.equal(testObject1, deletedNode.content);
       assert.equal(undefined, tree.get(lvl));
     });
@@ -164,6 +165,7 @@ describe('Dibba tree', function() {
       tree.insert(testObject1, lvl, lvl);
       assert.equal(testObject1, tree.get(lvl, lvl));
       var deletedNode = tree.delete(lvl, lvl);
+      assert.equal(lvl, deletedNode.id);
       assert.equal(testObject1, deletedNode.content);
       assert.equal(undefined, tree.get(lvl, lvl));
     });

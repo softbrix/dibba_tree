@@ -1,8 +1,10 @@
 var LeafIterator = require('./leafIterator.js');
 
-function DibbaNode(parent, content) {
+function DibbaNode(parent, id, content) {
   // The parent node, undefined for the root node
   this.parent = parent;
+  // This is the node id
+  this.id = id;
   // This is the children of the current node
   this.children = {};
   // This is the content of the node
@@ -28,7 +30,7 @@ function findOrCreateNode(node, pathArray) {
   var subNodeId = pathArray[0];
   var childNode = node.children[subNodeId];
   if(childNode === undefined) {
-    childNode = node.children[subNodeId] = new DibbaNode(node);
+    childNode = node.children[subNodeId] = new DibbaNode(node, subNodeId);
   }
   return findOrCreateNode(childNode, pathArray.slice(1));
 }
