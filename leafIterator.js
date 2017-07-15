@@ -67,6 +67,15 @@ function findPrevChild(node) {
   return undefined;
 }
 
+function getPath(node) {
+  var path = [];
+  while(node.parent) {
+    path.push(node.id);
+    node = node.parent;
+  }
+  return path.reverse();
+}
+
 /**
 Handle both next and prev
 **/
@@ -123,6 +132,13 @@ LeafIterator.prototype.prev = function() {
     this._nextNode = this._node;
   }
   return content;
+}
+
+LeafIterator.prototype.getPath = function() {
+  if(this._node !== undefined) {
+    return getPath(this._node);
+  }
+  return undefined;
 }
 
 module.exports = LeafIterator;

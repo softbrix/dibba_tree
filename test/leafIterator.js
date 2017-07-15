@@ -61,4 +61,17 @@ describe('Dibba tree leaf iterator', function() {
     assert.equal(it.prev(), 1);
     assert.equal(false, it.hasPrev());
   });
+
+  it('should return corrent path', function() {
+    var it = new LeafIterator(simpleTree());
+    // First path twice...
+    // TODO: This should be undefined
+    assert.deepEqual(it.getPath(), [0,0,0]);
+    it.next();
+    assert.deepEqual(it.getPath(), [0,0,0]);
+    it.next();
+    assert.deepEqual(it.getPath(), [0, 1]);
+    it.next();
+    assert.deepEqual(it.getPath(), [0, 2, 1]);
+  });
 });
