@@ -141,9 +141,8 @@ LeafIterator.prototype.getPath = function() {
   return undefined;
 }
 
-LeafIterator.prototype.gotoPath = function() {
-  var path = Array.prototype.slice.call(arguments);
-  this._node = this._tree.getNode.apply(this._tree, arguments);
+LeafIterator.prototype.gotoPath = function(path) {
+  this._node = this._tree.getNode.apply(this._tree, path);
   this._nextNode = undefined;
   this._prevNode = undefined;
 }

@@ -78,7 +78,7 @@ describe('Dibba tree leaf iterator', function() {
   it('should goto path', function() {
     var it = new LeafIterator(simpleTree());
     assert.deepEqual(it.next(), 0);
-    it.gotoPath(0, 2, 1); // Third
+    it.gotoPath([0, 2, 1]); // Third
     assert.equal(it.next(), 3);
   });
 });
