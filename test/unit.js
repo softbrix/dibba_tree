@@ -181,5 +181,12 @@ describe('Dibba tree', function() {
       assert.equal(testObject2, it.next());
       assert.equal(false, it.hasNext());
     });
+
+    it('should return a reverse leafIterator', function() {
+      var it = tree.leafIteratorReverse();
+      assert.equal(testObject2, it.prev());
+      assert.equal(testObject1, it.prev());
+      assert.equal(false, it.hasPrev());
+    });
   });
 });

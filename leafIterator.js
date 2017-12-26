@@ -92,14 +92,21 @@ function step(stepNode, findStepNode) {
 }
 
 
-function LeafIterator(tree) {
+function LeafIterator(tree, reverse) {
   if(tree === undefined) {
     throw new Error("Missing argument tree in leaf iterator");
   }
   this._tree = tree;
-  this._node = moveDown(tree.getNode());
-  this._nextNode = this._node;
-  this._prevNode = undefined;
+
+  if(reverse === true) {
+    this._node = moveDown(tree.getNode(), true);
+    this._prevNode = this._node;
+    this._nextNode = undefined;
+  } else {
+    this._node = moveDown(tree.getNode());
+    this._nextNode = this._node;
+    this._prevNode = undefined;
+  }
 }
 
 LeafIterator.prototype.hasNext = function() {

@@ -126,10 +126,17 @@ DibbaTree.prototype.getSize = function() {
 }
 
 /**
-Get the number of the nodes in the tree.
+Return a new leaf iterator starting from the lower values in the tree
 **/
 DibbaTree.prototype.leafIterator = function() {
   return new LeafIterator(this);
+}
+
+/**
+Return a new leaf iterator starting from the higher values in the tree
+**/
+DibbaTree.prototype.leafIteratorReverse = function() {
+  return new LeafIterator(this, true);
 }
 
 module.exports = DibbaTree;

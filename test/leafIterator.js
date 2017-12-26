@@ -81,4 +81,14 @@ describe('Dibba tree leaf iterator', function() {
     it.gotoPath([0, 2, 1]); // Third
     assert.equal(it.next(), 3);
   });
+
+  it('should be created as a reverse iterator', function() {
+    var it = new LeafIterator(simpleTree(), true);
+    assert.equal(false, it.hasNext());
+    for( i = 6; i >= 0; --i) {
+      assert.equal(true, it.hasPrev(), 'Expected has prev');
+      assert.equal(it.prev(), i);
+    }
+    assert.equal(false, it.hasPrev());
+  });
 });
