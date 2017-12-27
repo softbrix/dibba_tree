@@ -12,7 +12,7 @@ function childKeys(node) {
 function getChildKey(node, keys) {
   var childKeyId = keys.indexOf(""+node.id);
   if(childKeyId === -1) {
-    console.log(keys, node);
+    //console.log('Node has been deleted?', keys, node);
     // Node has been deleted?
     throw new Error('Node has been deleted?');
   }

@@ -15,6 +15,29 @@ DibbaNode.prototype.getChildren = function() {
   return Object.keys(this.children);
 };
 
+DibbaNode.prototype.getLeaves = function() {
+  var nodeArray = flatten(this.children);
+  return nodeArray.map(node => node.content);
+};
+
+function flatten(nodes, leafArray) {
+  if(leafArray === undefined) {
+    leafArray = [];
+  }
+
+  Object.keys(nodes).map(function(key) {
+    var node = nodes[key];
+    var nOfChildren = Object.keys(node.children).length;
+    if(nOfChildren === 0) {
+      leafArray.push(node);
+    } else {
+      leafArray = flatten(node.children, leafArray);
+    }
+  });
+
+  return leafArray;
+}
+
 function findNode(node, pathArray) {
   if(pathArray.length === 0) {
     return node;

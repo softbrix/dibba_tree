@@ -194,6 +194,12 @@ describe('Dibba tree', function() {
       assert.deepEqual([1,2,3], tree.getNode(1).getChildren());
       assert.deepEqual([4,5,6], tree.getNode(2).getChildren());
     });
+
+    it('should return leaves at requested level', function() {
+      assert.deepEqual([11,12,13,24,25,26,37,38,39], tree.getNode().getLeaves());
+      assert.deepEqual([24,25,26], tree.getNode(2).getLeaves());
+      assert.deepEqual([], tree.getNode(1,1).getLeaves());
+    });
   });
 
   describe('leafIterator', function() {
