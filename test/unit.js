@@ -171,6 +171,31 @@ describe('Dibba tree', function() {
     });
   });
 
+  describe('access methods', function() {
+    var tree = new DibbaTree();
+    //                     root
+    //       1      |        2      |        3
+    // 11 | 12 | 13 |  24 | 25 | 26 |  37 | 38 | 39
+
+    tree.insert(11, 1, 1);
+    tree.insert(12, 1, 2);
+    tree.insert(13, 1, 3);
+
+    tree.insert(24, 2, 4);
+    tree.insert(25, 2, 5);
+    tree.insert(26, 2, 6);
+
+    tree.insert(37, 3, 7);
+    tree.insert(38, 3, 8);
+    tree.insert(39, 3, 9);
+
+    it('should list childern at requested level', function() {
+      assert.deepEqual([1,2,3], tree.getNode().getChildren());
+      assert.deepEqual([1,2,3], tree.getNode(1).getChildren());
+      assert.deepEqual([4,5,6], tree.getNode(2).getChildren());
+    });
+  });
+
   describe('leafIterator', function() {
     var tree = new DibbaTree();
     it('should return a leafIterator', function() {

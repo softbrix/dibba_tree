@@ -11,6 +11,10 @@ function DibbaNode(parent, id, content) {
   this.content = content;
 }
 
+DibbaNode.prototype.getChildren = function() {
+  return Object.keys(this.children);
+};
+
 function findNode(node, pathArray) {
   if(pathArray.length === 0) {
     return node;
