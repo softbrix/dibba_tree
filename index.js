@@ -11,13 +11,26 @@ function DibbaNode(parent, id, content) {
   this.content = content;
 }
 
+/** Return the keys of the nodes childern */
 DibbaNode.prototype.getChildren = function() {
-  return Object.keys(this.children);
+  return Object.keys(this.children).sort();
 };
 
+/** Return all the leaves and child leaves from this node */
 DibbaNode.prototype.getLeaves = function() {
   var nodeArray = flatten(this.children);
-  return nodeArray.map(node => node.content);
+  return nodeArray.filter(node => node.content != undefined).map(node => node.content);
+};
+
+/** Return the path for the node by recursively calling its parents */
+DibbaNode.prototype._getPath = function() {
+  if(this.parent !== undefined) {
+    var p = this.parent._getPath();
+    p.push(this.id);
+    return p;
+  }
+  // Root has no 'id'
+  return [];
 };
 
 function flatten(nodes, leafArray) {
@@ -25,8 +38,10 @@ function flatten(nodes, leafArray) {
     leafArray = [];
   }
 
+  // Loop over the object array
   Object.keys(nodes).map(function(key) {
     var node = nodes[key];
+    //console.log('getChild',node.id, node.getChildren, nodes.children);
     var nOfChildren = Object.keys(node.children).length;
     if(nOfChildren === 0) {
       leafArray.push(node);
@@ -60,6 +75,41 @@ function findOrCreateNode(node, pathArray) {
     childNode = node.children[subNodeId] = new DibbaNode(node, subNodeId);
   }
   return findOrCreateNode(childNode, pathArray.slice(1));
+}
+
+/** The subset helper will recursively go through all
+the levels as long as the from or to parameters are not undefined or empty.
+When the from and to parameters are empty then the entire subtree of the current
+ node is copied */
+function _subSetHelper(copyNode, from, to, newNode) {
+  if(copyNode === undefined) {
+    return;
+  }
+  var start = from !== undefined && from.length ? "" + from.shift() : undefined;
+  var end = to !== undefined && to.length ? "" + to.shift() : undefined;
+  newNode.content = copyNode.content;
+  // No limits, copy all
+  if(start === undefined && end === undefined) {
+    newNode.children = copyNode.children;
+  } else {
+
+    copyNode.getChildren().forEach((x) => {
+      if(start !== undefined && x < start) {
+        return;
+      }
+      if(end !== undefined && x > end) {
+        return false;
+      }
+
+
+      newNode.children[x] = new DibbaNode(newNode, x);
+      var childNode = copyNode.children[x];
+      _subSetHelper(childNode,
+          start === x ? from : undefined,
+          end === x ? to : undefined,
+          newNode.children[x]);
+    });
+  }
 }
 
 function DibbaTree() {
@@ -144,6 +194,21 @@ DibbaTree.prototype.get = function() {
   }
   return node.content;
 };
+
+/**
+Returns a subset tree of the tree from the first node to the end node inclusive
+**/
+DibbaTree.prototype.subSet = function(from, to) {
+  if(from !== undefined && !Array.isArray(from)) {
+    from = from._getPath();
+  }
+  if(to !== undefined && !Array.isArray(to)) {
+    to = to._getPath();
+  }
+  var tree = new DibbaTree();
+  _subSetHelper(this.getNode(), from, to, tree.getNode());
+  return tree;
+}
 
 /**
 Get the number of the nodes in the tree.
