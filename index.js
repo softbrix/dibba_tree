@@ -12,7 +12,7 @@ function DibbaNode(parent, id, content) {
 }
 
 /** Return the keys of the nodes childern */
-DibbaNode.prototype.getChildren = function() {
+DibbaNode.prototype.getChildrenKeys = function() {
   return Object.keys(this.children).sort();
 };
 
@@ -24,14 +24,17 @@ DibbaNode.prototype.getLeaves = function() {
 
 /** Return the path for the node by recursively calling its parents */
 DibbaNode.prototype._getPath = function() {
-  if(this.parent !== undefined) {
-    var p = this.parent._getPath();
-    p.push(this.id);
-    return p;
-  }
-  // Root has no 'id'
-  return [];
+  return getPath(this);
 };
+
+function getPath(node) {
+  var path = [];
+  while(node.parent) {
+    path.push(node.id);
+    node = node.parent;
+  }
+  return path.reverse();
+}
 
 function flatten(nodes, leafArray) {
   if(leafArray === undefined) {
@@ -41,7 +44,7 @@ function flatten(nodes, leafArray) {
   // Loop over the object array
   Object.keys(nodes).map(function(key) {
     var node = nodes[key];
-    //console.log('getChild',node.id, node.getChildren, nodes.children);
+    //console.log('getChild',node.id, node.getChildrenKeys, nodes.children);
     var nOfChildren = Object.keys(node.children).length;
     if(nOfChildren === 0) {
       leafArray.push(node);
@@ -53,28 +56,20 @@ function flatten(nodes, leafArray) {
   return leafArray;
 }
 
-function findNode(node, pathArray) {
+function findNode(node, pathArray, create) {
   if(pathArray.length === 0) {
     return node;
   }
   var subNodeId = pathArray[0];
   var childNode = node.children[subNodeId];
   if(childNode === undefined) {
-    return undefined;
+    if(create) {
+      childNode = node.children[subNodeId] = new DibbaNode(node, subNodeId);
+    } else {
+      return undefined;
+    }
   }
-  return findNode(childNode, pathArray.slice(1));
-}
-
-function findOrCreateNode(node, pathArray) {
-  if(pathArray.length === 0) {
-    return node;
-  }
-  var subNodeId = pathArray[0];
-  var childNode = node.children[subNodeId];
-  if(childNode === undefined) {
-    childNode = node.children[subNodeId] = new DibbaNode(node, subNodeId);
-  }
-  return findOrCreateNode(childNode, pathArray.slice(1));
+  return findNode(childNode, pathArray.slice(1), create);
 }
 
 /** The subset helper will recursively go through all
@@ -92,15 +87,13 @@ function _subSetHelper(copyNode, from, to, newNode) {
   if(start === undefined && end === undefined) {
     newNode.children = copyNode.children;
   } else {
-
-    copyNode.getChildren().forEach((x) => {
+    copyNode.getChildrenKeys().forEach((x) => {
       if(start !== undefined && x < start) {
         return;
       }
       if(end !== undefined && x > end) {
         return false;
       }
-
 
       newNode.children[x] = new DibbaNode(newNode, x);
       var childNode = copyNode.children[x];
@@ -129,7 +122,7 @@ DibbaTree.prototype.insert = function(content) {
   }
   // Slice first parameter which is content
   var path = Array.prototype.slice.call(arguments, 1);
-  var node = findOrCreateNode(this._rootNode, path);
+  var node = findNode(this._rootNode, path, true);
   if(node.content !== undefined) {
     throw Error('Node already exists');
   }
@@ -144,7 +137,7 @@ The update method works as insert but will replace the content of the node if it
 DibbaTree.prototype.update = function(content) {
   // Slice first parameter which is content
   var path = Array.prototype.slice.call(arguments, 1);
-  var node = findOrCreateNode(this._rootNode, path);
+  var node = findNode(this._rootNode, path, true);
   if(node.content === undefined) {
     this._size += 1;
   }

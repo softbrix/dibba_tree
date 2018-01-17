@@ -191,9 +191,9 @@ describe('Dibba tree', function() {
     tree.insert(39, 3, 9);
 
     it('should list childern at requested level', function() {
-      assert.deepEqual([1,2,3], tree.getNode().getChildren());
-      assert.deepEqual([1,2,3], tree.getNode(1).getChildren());
-      assert.deepEqual([4,5,6], tree.getNode(2).getChildren());
+      assert.deepEqual([1,2,3], tree.getNode().getChildrenKeys());
+      assert.deepEqual([1,2,3], tree.getNode(1).getChildrenKeys());
+      assert.deepEqual([4,5,6], tree.getNode(2).getChildrenKeys());
     });
 
     it('should return leaves at requested level', function() {
@@ -202,15 +202,16 @@ describe('Dibba tree', function() {
       assert.deepEqual([], tree.getNode(1,1).getLeaves());
     });
 
-    it('should return a subset with the specified parameter', function() {
-      //assert.deepEqual([/*11,12,*/13,24,25,26], tree.subSet([1,3], [3,6]).getNode().getLeaves());
-      //assert.deepEqual([/*11,12,13,*/24,25,26,37,38,39], tree.subSet([2,1], undefined).getNode().getLeaves());
-      //assert.deepEqual([11,12,13,24,25,26,37/*,38,39*/], tree.subSet(undefined, [3,7]).getNode().getLeaves());
+    it('should return a subset with the specified parameter as array', function() {
+      assert.deepEqual([/*11,12,*/13,24,25,26], tree.subSet([1,3], [3,6]).getNode().getLeaves());
+      assert.deepEqual([/*11,12,13,*/24,25,26,37,38,39], tree.subSet([2,1], undefined).getNode().getLeaves());
+      assert.deepEqual([11,12,13,24,25,26,37/*,38,39*/], tree.subSet(undefined, [3,7]).getNode().getLeaves());
+    });
 
+    it('should return a subset with the specified parameter as node', function() {
       assert.deepEqual([11,12,13,24,25,26/*,37,38,39*/], tree.subSet(tree.getNode(1), tree.getNode(2)).getNode().getLeaves());
       assert.deepEqual([11,12,13,24,25,26/*,37,38,39*/], tree.subSet(undefined, tree.getNode(2)).getNode().getLeaves());
-      //assert.deepEqual([24,25,26], tree.getNode(2).getLeaves());
-      //assert.deepEqual([], tree.getNode(1,1).getLeaves());
+      assert.deepEqual([11,12,13,24,25,26,37,38,39], tree.subSet(undefined, undefined).getNode().getLeaves());
     });
   });
 
