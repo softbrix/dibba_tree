@@ -34,7 +34,7 @@ function moveDown(node, pickLastKey) {
   return node;
 }
 
-function findNextChild(node) {
+function findNextLeaf(node) {
   var parent = node.parent;
 
   if(parent !== undefined) {
@@ -45,13 +45,13 @@ function findNextChild(node) {
       node = parent.children[keys[nextChildId]];
       return moveDown(node);
     } else {
-      return findNextChild(parent);
+      return findNextLeaf(parent);
     }
   }
   return undefined;
 }
 
-function findPrevChild(node) {
+function findPrevLeaf(node) {
   var parent = node.parent;
   if(parent !== undefined) {
     var keys = childKeys(parent);
@@ -61,19 +61,38 @@ function findPrevChild(node) {
       node = parent.children[keys[nextChildId]];
       return moveDown(node, true);
     } else {
-      return findPrevChild(parent);
+      return findPrevLeaf(parent);
     }
   }
   return undefined;
 }
 
-function getPath(node) {
-  var path = [];
-  while(node.parent) {
-    path.push(node.id);
-    node = node.parent;
+function findClosestChildKey(node, childKey) {
+  var keys = node.getChildrenKeys();
+  var lastKey = keys[0], i = 0;
+  while(++i < keys.length && keys[i] < childKey) {
+    lastKey = keys[i];
   }
-  return path.reverse();
+  return lastKey;
+}
+
+/**
+Traverse the tree as long as we can with the current path, when there is no
+match with the path and the children then move down to the closest leaf node.
+*/
+function findClosestLeaf(node, pathArray) {
+  if(pathArray.length === 0 ||
+     node.children.length === 0) {
+    return node;
+  }
+  var subNodeId = pathArray[0];
+  var childNode = node.children[subNodeId];
+  if(childNode === undefined) {
+    key = findClosestChildKey(node, subNodeId);
+    // We might want the rightmost child if the requested id is larger than the given key
+    return moveDown(node.children[key], key < subNodeId);
+  }
+  return findClosestLeaf(childNode, pathArray.slice(1));
 }
 
 /**
@@ -111,13 +130,13 @@ function LeafIterator(tree, reverse) {
 
 LeafIterator.prototype.hasNext = function() {
   if(this._nextNode == undefined) {
-    this._nextNode = findNextChild(this._node);
+    this._nextNode = findNextLeaf(this._node);
   }
   return this._nextNode !== undefined;
 }
 
 LeafIterator.prototype.next = function() {
-  var content = step.bind(this)(this._nextNode, findNextChild);
+  var content = step.bind(this)(this._nextNode, findNextLeaf);
   this._nextNode = undefined;
   if(this._node !== undefined) {
     this._prevNode = this._node;
@@ -127,13 +146,13 @@ LeafIterator.prototype.next = function() {
 
 LeafIterator.prototype.hasPrev = function() {
   if(this._prevNode == undefined) {
-    this._prevNode = findPrevChild(this._node);
+    this._prevNode = findPrevLeaf(this._node);
   }
   return this._prevNode !== undefined;
 }
 
 LeafIterator.prototype.prev = function() {
-  var content = step.bind(this)(this._prevNode, findPrevChild);
+  var content = step.bind(this)(this._prevNode, findPrevLeaf);
   this._prevNode = undefined;
   if(this._node !== undefined) {
     this._nextNode = this._node;
@@ -143,15 +162,19 @@ LeafIterator.prototype.prev = function() {
 
 LeafIterator.prototype.getPath = function() {
   if(this._node !== undefined) {
-    return getPath(this._node);
+    return this._node._getPath();
   }
   return undefined;
 }
 
 LeafIterator.prototype.gotoPath = function(path) {
   this._node = this._tree.getNode.apply(this._tree, path);
-  this._nextNode = undefined;
-  this._prevNode = undefined;
+  if(this._node === undefined) {
+    this._node = findClosestLeaf(this._tree._rootNode, path);
+  }
+  this._node = moveDown(this._node);
+  this._nextNode = this._node;
+  this._prevNode = this._node;
 }
 
 module.exports = LeafIterator;

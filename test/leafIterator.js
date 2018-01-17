@@ -15,19 +15,21 @@ describe('Dibba tree leaf iterator', function() {
     tree.insert('2', 0, 2, 1); // third
     tree.insert('4', 0, 3); // fifth
     tree.insert('6', 2, 0); // seventh
+    tree.insert('7', 2, 1); // seventh
     return tree;
   };
+  var LEAF_NODE_COUNT = 7;
 
   it('should iterate over the given tree with has next and has prev', function() {
     var it = new LeafIterator(simpleTree());
     var i = 0;
     assert.equal(false, it.hasPrev());
-    for(i = 0; i <= 6; ++i) {
+    for(i = 0; i <= LEAF_NODE_COUNT; ++i) {
       assert.equal(true, it.hasNext(), 'Expected has next');
       assert.equal(it.next(), i);
     }
     assert.equal(false, it.hasNext());
-    for( i = 6; i >= 0; --i) {
+    for( i = LEAF_NODE_COUNT; i >= 0; --i) {
       assert.equal(true, it.hasPrev(), 'Expected has prev');
       assert.equal(it.prev(), i);
     }
@@ -38,11 +40,11 @@ describe('Dibba tree leaf iterator', function() {
     var it = new LeafIterator(simpleTree());
     var i = 0;
     assert.equal(false, it.hasPrev());
-    for(i = 0; i <= 6; ++i) {
+    for(i = 0; i <= LEAF_NODE_COUNT; ++i) {
       assert.equal(it.next(), i);
     }
     assert.equal(false, it.hasNext());
-    for( i = 6; i >= 0; --i) {
+    for( i = LEAF_NODE_COUNT; i >= 0; --i) {
       assert.equal(it.prev(), i);
     }
     assert.equal(false, it.hasPrev());
@@ -79,13 +81,41 @@ describe('Dibba tree leaf iterator', function() {
     var it = new LeafIterator(simpleTree());
     assert.deepEqual(it.next(), 0);
     it.gotoPath([0, 2, 1]); // Third
+    assert.equal(it.next(), 2);
     assert.equal(it.next(), 3);
+  });
+
+  it('should goto path outside data nodes', function() {
+    var it = new LeafIterator(simpleTree());
+    assert.deepEqual(it.next(), 0);
+    it.gotoPath([3, 4]); // outside most right node in the tree
+    assert.equal(true, it.hasNext());
+    assert.equal(true, it.hasPrev());
+    assert.equal(7, it.prev());
+  });
+
+  it('should goto path missing inside node', function() {
+    var it = new LeafIterator(simpleTree());
+    assert.deepEqual(it.next(), 0);
+    it.gotoPath([0, 2, 0]); // Goto an missing node
+    assert.equal(true, it.hasNext());
+    assert.equal(true, it.hasPrev());
+    assert.equal(2, it.next());
+  });
+
+  it('should goto path internal node', function() {
+    var it = new LeafIterator(simpleTree());
+    assert.deepEqual(it.next(), 0);
+    it.gotoPath([0, 2]); // Goto an internal node
+    assert.equal(true, it.hasNext());
+    assert.equal(true, it.hasPrev());
+    assert.equal(2, it.next());
   });
 
   it('should be created as a reverse iterator', function() {
     var it = new LeafIterator(simpleTree(), true);
     assert.equal(false, it.hasNext());
-    for( i = 6; i >= 0; --i) {
+    for( i = LEAF_NODE_COUNT; i >= 0; --i) {
       assert.equal(true, it.hasPrev(), 'Expected has prev');
       assert.equal(it.prev(), i);
     }
