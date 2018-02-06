@@ -167,12 +167,12 @@ LeafIterator.prototype.getPath = function() {
   return undefined;
 }
 
-LeafIterator.prototype.gotoPath = function(path) {
+LeafIterator.prototype.gotoPath = function(path, pickLastKey) {
   this._node = this._tree.getNode.apply(this._tree, path);
   if(this._node === undefined) {
     this._node = findClosestLeaf(this._tree._rootNode, path);
   }
-  this._node = moveDown(this._node);
+  this._node = moveDown(this._node, pickLastKey);
   this._nextNode = this._node;
   this._prevNode = this._node;
 }
