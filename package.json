@@ -1,6 +1,6 @@
 {
   "name": "dibba-tree",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A tree data model implementation for javascript",
   "main": "index.js",
   "scripts": {
