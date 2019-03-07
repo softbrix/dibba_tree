@@ -213,6 +213,29 @@ describe('Dibba tree', function() {
       assert.deepEqual([11,12,13,24,25,26/*,37,38,39*/], tree.subSet(undefined, tree.getNode(2)).getNode().getLeaves());
       assert.deepEqual([11,12,13,24,25,26,37,38,39], tree.subSet(undefined, undefined).getNode().getLeaves());
     });
+
+    it('should return a random element', function() {
+      var len = 9;
+      var hits = {};
+      for (let i = 0; i < len; ++i) {
+        let val = tree.randomLeaf();
+        hits[val] = 1;
+      }
+      assert.equal(true, Object.keys(hits).length > 0)
+    });
+
+    it('should return a random element, eventually returns all elements', function() {
+      var len = 9;
+      var hits = {};
+      for (let i = 0; i < len * 100; ++i) {
+        let val = tree.randomLeaf();
+        hits[val] = 1;
+        if (Object.keys(hits).length == len) {
+          break;
+        }
+      }
+      assert.equal(len, Object.keys(hits).length)
+    });
   });
 
   describe('leafIterator', function() {

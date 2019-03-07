@@ -105,6 +105,10 @@ function _subSetHelper(copyNode, from, to, newNode) {
   }
 }
 
+function _getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 function DibbaTree() {
   this._rootNode = new DibbaNode();
   this._size = 0;
@@ -222,6 +226,19 @@ Return a new leaf iterator starting from the higher values in the tree
 **/
 DibbaTree.prototype.leafIteratorReverse = function() {
   return new LeafIterator(this, true);
+}
+
+/**
+Return a new leaf iterator starting from the higher values in the tree
+**/
+DibbaTree.prototype.randomLeaf = function() {
+  var node = this._rootNode;
+  var children = Object.values(node.children || {});
+  while (children.length > 0) {
+    node = children[_getRandomInt(children.length)]
+    children = Object.values(node.children || {});
+  }
+  return node.content;
 }
 
 module.exports = DibbaTree;
