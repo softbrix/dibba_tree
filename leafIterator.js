@@ -88,7 +88,7 @@ function findClosestLeaf(node, pathArray) {
   var subNodeId = pathArray[0];
   var childNode = node.children[subNodeId];
   if(childNode === undefined) {
-    key = findClosestChildKey(node, subNodeId);
+    let key = findClosestChildKey(node, subNodeId);
     // We might want the rightmost child if the requested id is larger than the given key
     return moveDown(node.children[key], key < subNodeId);
   }

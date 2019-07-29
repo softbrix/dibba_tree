@@ -114,6 +114,15 @@ describe('Dibba tree leaf iterator', function() {
     assert.equal(2, it.next());
   });
 
+  it('should goto path missing inside node', function() {
+    var it = new LeafIterator(simpleTree());
+    assert.deepEqual(it.next(), 0);
+    it.gotoPath([0, 4, 3]); // Goto an missing node
+    assert.equal(true, it.hasNext());
+    assert.equal(true, it.hasPrev());
+    assert.equal(4, it.next());
+  });
+
   it('should goto path internal node', function() {
     var it = new LeafIterator(simpleTree());
     assert.deepEqual(it.next(), 0);
